@@ -14,31 +14,36 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 df = pd.read_csv('TASK-2 DATA.csv')
-'''
-#print(df.to_string()) 
-#print(type(df))
-#print("Info on training examples:",df.info())
 
-ndarr=df.to_numpy()
-#print(type(ndarr))
-#print(ndarr[1])
-ndarr=ndarr[:,1:5]
-#print(ndarr)
-'''
-print("Info on training examples:",df.info())
+print("Info on training examples:")
+print(df.info())
+
+print("First 5 samples:\n",df.head())
+print("Last 5 samples:\n",df.tail())
+
+#%%Data Cleaning and Manipulation
+
+#Checking fo null values
+print("Null Values:")
+print(df.isnull().sum())
 
 #Converting dataframe to a 2-D numpy array
 ndarr=df.to_numpy()
-#Eliminating features  Id and Species
+#Dropping features  Id and Species
 ndarr=ndarr[:,1:5]
 
 #Feature Scaling
 scaler = StandardScaler()
 scaled_ndarr = scaler.fit_transform(ndarr)
 
-#%%Elbow method
+print("First 5 samples after Feature Scaling:\n",scaled_ndarr[:5,])
+print("Last 5 samples after Feature Scaling:\n",scaled_ndarr[-5:,])
+
+#%%Obtainig the optimal value of the no. of clusters
+#Elbow method
 #Array to hold Sum of Squared Errors for each value of k(2 to 10)
 SSE=[]
+
 for k in range(1,11):
     iriskm=KMeans(n_clusters=k, init='k-means++', n_init=10, max_iter=300)
     iriskm.fit(scaled_ndarr)
@@ -58,7 +63,7 @@ kl = KneeLocator(
 print("Elbow:",kl.elbow)
 
 
-#%%K-means with obtained optimal value of No. of clusters
+#%%Performing K-means with obtained optimal value of No. of clusters
 
 K=kl.elbow
 
@@ -86,9 +91,8 @@ print("Reduced Centers:\n",reducedcenters)
 
 #%%Visualization
 
-#print(reduceddf[reduceddf['Cluster']==0])
 clusters=reduceddf.Cluster.unique()
-print(clusters)
+#print(clusters)
 colors = np.array(["red","green","blue","yellow","pink","black","orange","purple","beige","brown","gray","cyan","magenta"])
 
 for x in clusters:
